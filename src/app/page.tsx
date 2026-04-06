@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 
 import styles from "./page.module.css";
 
@@ -8,23 +7,26 @@ import { AddTransactionForm } from "./components/AddTransactionForm";
 import { TransactionList } from "./components/TransactionList";
 import { AccountBalance } from "./components/AccountBalance";
 import { ITransaction } from "./types/transaction";
+import {useTransactions} from "@/app/hooks/useTransactions";
+import {useEffect} from "react";
 
 export default function Home() {
-  const [transactions, setTransactions] = useState<ITransaction[]>([]);
+  const { transactions, isLoading, error, fetchTransactions, deleteTransaction, createTransaction } = useTransactions()
+    console.log(transactions)
 
-  const addTransaction = (newTransaction: ITransaction) => {
-    setTransactions((previousTransactions) => [
-      ...previousTransactions,
-      newTransaction,
-    ]);
-    console.log("Transação adicionada!");
-  };
+
+    useEffect(() => {
+        fetchTransactions()
+    }, [])
+
+    if (isLoading) return <p>Carregando...</p>
+    if (error) return <p>{error}</p>
 
   return (
     <div className={styles.page}>
       <main className={styles.main}>
         <AccountBalance transactions={transactions} />
-        <AddTransactionForm addTransaction={addTransaction} />
+        <AddTransactionForm addTransaction={createTransaction} />
         <TransactionList transactions={transactions} />
       </main>
     </div>
