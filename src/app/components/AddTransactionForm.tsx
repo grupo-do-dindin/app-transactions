@@ -9,7 +9,7 @@ interface AddTranscationFormProps {
 
 const initialTransaction: ITransaction = {
   id: Date.now(),
-  createAt: new Date().toISOString().split("T")[0],
+  createdAt: new Date().toISOString().split("T")[0],
   price: 0,
   description: "",
   type: "income",
@@ -28,7 +28,7 @@ export const AddTransactionForm = ({
 
     setNewTransaction({
       id: Date.now(),
-      createAt: new Date().toISOString().split("T")[0],
+      createdAt: new Date().toISOString().split("T")[0],
       price: 0,
       description: "",
       type: "income",

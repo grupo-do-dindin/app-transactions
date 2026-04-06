@@ -4,7 +4,7 @@ export interface ITransaction {
   type: 'income' | 'outcome';
   category: string;
   price: number;
-  createAt: string;
+  createdAt: string;
 }
 
 export type CreateTransactionInput = Omit<ITransaction, 'id' | 'createdAt'>

@@ -18,11 +18,10 @@
     },
     {
       "id": "nzhznWP-JfU",
-      "createAt": "2026-04-06",
-      "price": 10000,
       "description": "desenvolvimento app",
       "type": "income",
       "category": "venda",
+      "price": 10000,
       "createdAt": "2026-04-06T20:14:13.031Z"
     }
   ],
