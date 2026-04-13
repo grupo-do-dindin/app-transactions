@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { ITransaction, CreateTransactionInput, UpdateTransactionInput } from "../types/transaction"
+import { ITransaction, UpdateTransactionInput } from "../types/transaction"
 
 interface TransactionsState {
     transactions: ITransaction[]

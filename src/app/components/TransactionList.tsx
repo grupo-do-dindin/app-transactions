@@ -17,7 +17,7 @@ export const TransactionList = ({ transactions }: TransactionListProps) => {
               {transaction.description}
             </span>
             <span>{transaction.category}</span>
-            <span className="text-xs text-gray-400">{transaction.createAt}</span>
+            <span className="text-xs text-gray-400">{transaction.createdAt}</span>
           </div>
 
           <span
