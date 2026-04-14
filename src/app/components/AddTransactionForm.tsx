@@ -9,10 +9,11 @@ interface AddTranscationFormProps {
 
 const initialTransaction: ITransaction = {
   id: Date.now(),
-  date: new Date().toISOString().split("T")[0],
-  amount: 0,
+  createdAt: new Date().toISOString().split("T")[0],
+  price: 0,
   description: "",
-  type: "credito",
+  type: "income",
+  category: "",
 };
 
 export const AddTransactionForm = ({
@@ -27,10 +28,11 @@ export const AddTransactionForm = ({
 
     setNewTransaction({
       id: Date.now(),
-      date: new Date().toISOString().split("T")[0],
-      amount: 0,
+      createdAt: new Date().toISOString().split("T")[0],
+      price: 0,
       description: "",
-      type: "credito",
+      type: "income",
+      category: "",
     });
   };
 
@@ -58,20 +60,38 @@ export const AddTransactionForm = ({
         />
       </div>
 
+      {/* Categoria */}
+      <div className="flex flex-col gap-1">
+        <label className="text-sm text-gray-600">Categoria</label>
+        <input
+          type="text"
+          value={newTransaction.category}
+          onChange={(e) =>
+            setNewTransaction({
+              ...newTransaction,
+              category: e.target.value,
+            })
+          }
+          className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          placeholder="Ex: Alimentação"
+        />
+      </div>
+
       {/* Valor */}
       <div className="flex flex-col gap-1">
         <label className="text-sm text-gray-600">Valor</label>
         <input
           type="number"
-          value={newTransaction.amount}
+          value={newTransaction.price}
           onChange={(e) =>
             setNewTransaction({
               ...newTransaction,
-              amount: Number(e.target.value),
+              price: Number(e.target.value),
             })
           }
           className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
           placeholder="0.00"
+          step="0.01"
         />
       </div>
 
@@ -83,13 +103,13 @@ export const AddTransactionForm = ({
           onChange={(e) =>
             setNewTransaction({
               ...newTransaction,
-              type: e.target.value as "credito" | "debito",
+              type: e.target.value as "income" | "outcome",
             })
           }
           className="border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
         >
-          <option value="credito">Crédito</option>
-          <option value="debito">Débito</option>
+          <option value="income">Receita</option>
+          <option value="outcome">Despesa</option>
         </select>
       </div>
 

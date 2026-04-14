@@ -7,10 +7,10 @@ interface AccountBalanceProps {
 export const AccountBalance = ({ transactions }: AccountBalanceProps) => {
   const summary = transactions.reduce(
     (acc, transaction) => {
-      if (transaction.type === "credito") {
-        acc.credit += transaction.amount;
+      if (transaction.type === "income") {
+        acc.credit += transaction.price;
       } else {
-        acc.debit += transaction.amount;
+        acc.debit += transaction.price;
       }
       return acc;
     },
@@ -20,22 +20,35 @@ export const AccountBalance = ({ transactions }: AccountBalanceProps) => {
   const balance = summary.credit - summary.debit;
 
   return (
-    <div className="bg-white shadow-md rounded-2xl p-10 w-full max-w-md mx-auto mt-4 flex flex-col gap-3">
-      <h2 className="text-lg font-semibold text-gray-800">Resumo financeiro</h2>
-
-      <div className="flex justify-between text-green-600">
-        <span>Crédito</span>
-        <span>R$ {summary.credit.toFixed(2)}</span>
+    <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4 px-20 py-10 dark:bg-[#121214] bg-[#d1fae5]">
+      <div className="bg-zinc-800 rounded-lg p-10 shadow-md flex justify-between items-center">
+        <div>
+          <p className="text-sm text-gray-400">Entradas</p>
+          <p className="text-xl font-semibold text-white">
+            R$ {summary.credit.toFixed(2)}
+          </p>
+        </div>
+        <div className="text-green-400">⬆</div>
       </div>
 
-      <div className="flex justify-between text-red-500">
-        <span>Débito</span>
-        <span>R$ {summary.debit.toFixed(2)}</span>
+      <div className="bg-zinc-800 rounded-lg p-10 shadow-md flex justify-between items-center">
+        <div>
+          <p className="text-sm text-gray-400">Saídas</p>
+          <p className="text-xl font-semibold text-white">
+            R$ {summary.debit.toFixed(2)}
+          </p>
+        </div>
+        <div className="text-red-400">⬇</div>
       </div>
 
-      <div className="border-t pt-2 flex justify-between font-semibold text-gray-800">
-        <span>Saldo</span>
-        <span>R$ {balance.toFixed(2)}</span>
+      <div className="bg-emerald-700 rounded-lg p-10 shadow-md flex justify-between items-center">
+        <div>
+          <p className="text-sm text-white/70">Total</p>
+          <p className="text-xl font-semibold text-white">
+            R$ {balance.toFixed(2)}
+          </p>
+        </div>
+        <div className="text-white text-xl">$</div>
       </div>
     </div>
   );

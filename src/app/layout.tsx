@@ -1,21 +1,21 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { ThemeProvider } from "next-themes";
+import { Roboto } from "next/font/google";
+
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import { LayoutBase } from "./layout/LayoutBase/LayoutBase";
 
 export const metadata: Metadata = {
   title: "dindin",
   description: "Gestão de dados financeiros",
 };
+
+const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["100", "300", "400", "500", "700", "900"],
+  variable: "--font-roboto",
+});
 
 export default function RootLayout({
   children,
@@ -23,8 +23,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body>{children}</body>
+    <html lang="en" className={roboto.variable}>
+      <body>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem={false}
+        >
+          <LayoutBase>{children}</LayoutBase>
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
