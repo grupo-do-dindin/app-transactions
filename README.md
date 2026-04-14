@@ -2,7 +2,7 @@
 
 ## Intalação e uso
 
-Primeiro, close o repositório em sua máquina
+Primeiro, clone o repositório em sua máquina
 
 ```bash
 git clone
@@ -23,5 +23,5 @@ yarn i
 Pronto para executar!
 
 ```bash
-npm run server:dev
+npm run dev:all
 ```
