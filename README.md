@@ -23,5 +23,5 @@ yarn i
 Pronto para executar!
 
 ```bash
-npm run dev
+npm run server:dev
 ```

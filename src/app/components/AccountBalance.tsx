@@ -7,10 +7,10 @@ interface AccountBalanceProps {
 export const AccountBalance = ({ transactions }: AccountBalanceProps) => {
   const summary = transactions.reduce(
     (acc, transaction) => {
-      if (transaction.type === "credito") {
-        acc.credit += transaction.amount;
+      if (transaction.type === "income") {
+        acc.credit += transaction.price;
       } else {
-        acc.debit += transaction.amount;
+        acc.debit += transaction.price;
       }
       return acc;
     },
