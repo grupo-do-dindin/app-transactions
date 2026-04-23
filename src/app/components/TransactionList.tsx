@@ -1,35 +1,82 @@
+"use client";
+
+import { useState } from "react";
 import { ITransaction } from "../types/transaction";
 
 interface TransactionListProps {
   transactions: ITransaction[];
 }
 
-export const TransactionList = ({ transactions }: TransactionListProps) => {
-  return (
-    <div className="w-full max-w-md mx-auto mt-4 flex flex-col gap-3">
-      {transactions.map((transaction) => (
-        <div
-          key={transaction.id}
-          className="bg-white shadow-sm rounded-xl p-4 flex justify-between items-center"
-        >
-          <div className="flex flex-col">
-            <span className="text-gray-800 font-medium">
-              {transaction.description}
-            </span>
-            <span>{transaction.category}</span>
-            <span className="text-xs text-gray-400">{transaction.createdAt}</span>
-          </div>
+function formatCurrency(value: number): string {
+  return value.toLocaleString("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
 
-          <span
-            className={`font-semibold ${
-              transaction.type === "income" ? "text-green-600" : "text-red-500"
-            }`}
-          >
-            {transaction.type === "income" ? "+" : "-"} R${" "}
-            {transaction.price.toFixed(2)}
-          </span>
-        </div>
-      ))}
+function formatDate(dateStr: string): string {
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return dateStr;
+  return date.toLocaleDateString("pt-BR");
+}
+
+export const TransactionList = ({ transactions }: TransactionListProps) => {
+  const [search, setSearch] = useState("");
+
+  const filtered = search
+    ? transactions.filter((t) =>
+        t.description.toLowerCase().includes(search.toLowerCase())
+      )
+    : transactions;
+
+  return (
+    <div className="w-full max-w-4xl mx-auto mt-6 px-4">
+      <div className="flex gap-3 mb-4">
+        <input
+          type="text"
+          placeholder="Busque uma transação"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="flex-1 bg-[#121214] border border-[#323238] text-[#C4C4CC] rounded-md px-4 py-3 placeholder-[#7C7C8A] focus:outline-none"
+        />
+        <button
+          onClick={() => {}}
+          className="bg-transparent border border-[#00875F] text-[#00875F] hover:bg-[#00875F] hover:text-white px-5 py-3 rounded-md font-medium transition-colors flex items-center gap-2"
+        >
+          Buscar
+        </button>
+      </div>
+
+      <table className="w-full border-separate border-spacing-y-2">
+        <tbody>
+          {filtered.map((transaction) => (
+            <tr
+              key={transaction.id}
+              className="bg-[#29292E]"
+            >
+              <td className="py-4 px-6 rounded-l-md text-[#C4C4CC] w-1/2">
+                {transaction.description}
+              </td>
+              <td
+                className={`py-4 px-6 font-medium ${
+                  transaction.price >= 0
+                    ? "text-[#00B37E]"
+                    : "text-[#F75A68]"
+                }`}
+              >
+                {transaction.price < 0 ? "- " : ""}R${" "}
+                {formatCurrency(Math.abs(transaction.price))}
+              </td>
+              <td className="py-4 px-6 text-[#C4C4CC]">
+                {transaction.category}
+              </td>
+              <td className="py-4 px-6 rounded-r-md text-[#C4C4CC]">
+                {formatDate(transaction.createdAt)}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };

@@ -6,6 +6,7 @@ import { ITransaction } from "../types/transaction";
 interface AddTranscationFormProps {
   addTransaction: (transaction: ITransaction) => void;
   idTransaction?: number | null;
+  onClose?: () => void;
 }
 
 const initialTransaction: ITransaction = {
@@ -20,13 +21,21 @@ const initialTransaction: ITransaction = {
 export const AddTransactionForm = ({
   addTransaction,
   idTransaction,
+  onClose,
 }: AddTranscationFormProps) => {
   const [newTransaction, setNewTransaction] =
     useState<ITransaction>(initialTransaction);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    addTransaction(newTransaction);
+    const transactionToSave = {
+      ...newTransaction,
+      price:
+        newTransaction.type === "outcome"
+          ? -Math.abs(newTransaction.price)
+          : Math.abs(newTransaction.price),
+    };
+    addTransaction(transactionToSave);
 
     setNewTransaction({
       id: Date.now(),
@@ -47,7 +56,7 @@ export const AddTransactionForm = ({
         <h2 className="text-xl font-semibold text-[#E1E1E6]">
           {idTransaction ? "Editar transação" : "Nova transação"}
         </h2>
-        <span className="text-[#7C7C8A] cursor-pointer">🗙</span>
+        <span className="text-[#7C7C8A] cursor-pointer" onClick={onClose}>🗙</span>
       </div>
 
       <div className="flex flex-col gap-1">
@@ -104,7 +113,7 @@ export const AddTransactionForm = ({
         </datalist>
       </div>
 
-      <div className="flex justify-around">
+      <div className="flex justify-around gap-4">
         <div
           onClick={() => {
             setNewTransaction({
