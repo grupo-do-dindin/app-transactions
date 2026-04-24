@@ -71,7 +71,9 @@ export const AddTransactionForm = ({
         <h2 className="text-xl font-semibold text-[#E1E1E6]">
           {editingTransaction ? "Editar transação" : "Nova transação"}
         </h2>
-        <span className="text-[#7C7C8A] cursor-pointer" onClick={onClose}>🗙</span>
+        <span className="text-[#7C7C8A] cursor-pointer" onClick={onClose}>
+          🗙
+        </span>
       </div>
 
       <div className="flex flex-col gap-1">
@@ -92,7 +94,7 @@ export const AddTransactionForm = ({
       <div className="flex flex-col gap-1">
         <input
           placeholder="Valor"
-          type="number"
+          type="text"
           step="0.01"
           className="border-0 bg-[#121214] h-[40px] text-[#E1E1E6] rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400"
           value={newTransaction.price}
