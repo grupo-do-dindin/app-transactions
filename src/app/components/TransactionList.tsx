@@ -16,16 +16,17 @@ export const TransactionList = ({ transactions }: TransactionListProps) => {
             <span className="text-gray-800 font-medium">
               {transaction.description}
             </span>
-            <span className="text-xs text-gray-400">{transaction.date}</span>
+            <span>{transaction.category}</span>
+            <span className="text-xs text-gray-400">{transaction.createdAt}</span>
           </div>
 
           <span
             className={`font-semibold ${
-              transaction.type === "credito" ? "text-green-600" : "text-red-500"
+              transaction.type === "income" ? "text-green-600" : "text-red-500"
             }`}
           >
-            {transaction.type === "credito" ? "+" : "-"} R${" "}
-            {transaction.amount.toFixed(2)}
+            {transaction.type === "income" ? "+" : "-"} R${" "}
+            {transaction.price.toFixed(2)}
           </span>
         </div>
       ))}
