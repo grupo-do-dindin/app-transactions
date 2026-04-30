@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ITransaction } from "../types/transaction";
 
 interface AddTranscationFormProps {
   addTransaction: (transaction: ITransaction) => void;
-  idTransaction?: number | null;
+  editingTransaction?: ITransaction | null;
+  onClose?: () => void;
 }
 
 const initialTransaction: ITransaction = {
@@ -19,14 +20,37 @@ const initialTransaction: ITransaction = {
 
 export const AddTransactionForm = ({
   addTransaction,
-  idTransaction,
+  editingTransaction,
+  onClose,
 }: AddTranscationFormProps) => {
   const [newTransaction, setNewTransaction] =
     useState<ITransaction>(initialTransaction);
 
+  useEffect(() => {
+    if (editingTransaction) {
+      setNewTransaction({
+        ...editingTransaction,
+        price: Math.abs(editingTransaction.price),
+      });
+    } else {
+      setNewTransaction({
+        ...initialTransaction,
+        id: Date.now(),
+        createdAt: new Date().toISOString().split("T")[0],
+      });
+    }
+  }, [editingTransaction]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    addTransaction(newTransaction);
+    const transactionToSave = {
+      ...newTransaction,
+      price:
+        newTransaction.type === "outcome"
+          ? -Math.abs(newTransaction.price)
+          : Math.abs(newTransaction.price),
+    };
+    addTransaction(transactionToSave);
 
     setNewTransaction({
       id: Date.now(),
@@ -45,9 +69,11 @@ export const AddTransactionForm = ({
     >
       <div className="flex justify-between">
         <h2 className="text-xl font-semibold text-[#E1E1E6]">
-          {idTransaction ? "Editar transação" : "Nova transação"}
+          {editingTransaction ? "Editar transação" : "Nova transação"}
         </h2>
-        <span className="text-[#7C7C8A] cursor-pointer">🗙</span>
+        <span className="text-[#7C7C8A] cursor-pointer" onClick={onClose}>
+          🗙
+        </span>
       </div>
 
       <div className="flex flex-col gap-1">
@@ -68,7 +94,7 @@ export const AddTransactionForm = ({
       <div className="flex flex-col gap-1">
         <input
           placeholder="Valor"
-          type="number"
+          type="text"
           step="0.01"
           className="border-0 bg-[#121214] h-[40px] text-[#E1E1E6] rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400"
           value={newTransaction.price}
@@ -104,7 +130,7 @@ export const AddTransactionForm = ({
         </datalist>
       </div>
 
-      <div className="flex justify-around">
+      <div className="flex justify-around gap-4">
         <div
           onClick={() => {
             setNewTransaction({
@@ -135,7 +161,7 @@ export const AddTransactionForm = ({
         type="submit"
         className="bg-[#00875F] hover:bg-[#017552] rounded-md h-10 text-white transition-colors"
       >
-        {idTransaction ? "Editar" : "Cadastrar"}
+        {editingTransaction ? "Editar" : "Cadastrar"}
       </button>
     </form>
   );

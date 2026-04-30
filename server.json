@@ -31,6 +31,14 @@
       "description": "Cinema",
       "type": "outcome",
       "category": "Lazer"
+    },
+    {
+      "id": 1777030134365,
+      "createdAt": "2026-04-24T11:29:26.863Z",
+      "price": 150,
+      "description": "filme do michael jackson",
+      "type": "income",
+      "category": "Lazer"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

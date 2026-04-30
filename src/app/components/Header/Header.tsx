@@ -1,8 +1,11 @@
 "use client";
 import Image from "next/image";
 import { ThemeToggle } from "./ThemeToggle";
+import { useModalStore } from "@/app/store/useModalStore";
 
 export const Header = () => {
+  const openModal = useModalStore((state) => state.open);
+
   return (
     <header className="w-full h-20  flex items-center justify-between px-20 py-6 dark:bg-[#121214] bg-[#d1fae5]">
       <div className="flex items-center gap-2">
@@ -13,6 +16,7 @@ export const Header = () => {
       </div>
       <div className="flex items-center gap-2">
         <button
+          onClick={openModal}
           className="
             inline-flex items-center justify-center
             px-6 py-2
