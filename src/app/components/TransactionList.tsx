@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { ITransaction } from "../types/transaction";
 import { useModalStore } from "../store/useModalStore";
+import { useTransactions } from "../hooks/useTransactions";
+import { Pencil, Trash2 } from "lucide-react";
 
 interface TransactionListProps {
   transactions: ITransaction[];
@@ -24,6 +26,7 @@ function formatDate(dateStr: string): string {
 export const TransactionList = ({ transactions }: TransactionListProps) => {
   const [search, setSearch] = useState("");
   const openEdit = useModalStore((state) => state.openEdit);
+  const { deleteTransaction } = useTransactions();
 
   const filtered = search
     ? transactions.filter((t) =>
@@ -54,8 +57,7 @@ export const TransactionList = ({ transactions }: TransactionListProps) => {
           {filtered.map((transaction) => (
             <tr
               key={transaction.id}
-              className="bg-[#29292E] cursor-pointer hover:bg-[#323238] transition-colors"
-              onClick={() => openEdit(transaction)}
+              className="bg-[#29292E] hover:bg-[#323238] transition-colors"
             >
               <td className="py-4 px-6 rounded-l-md text-[#C4C4CC] w-1/2">
                 {transaction.description}
@@ -71,8 +73,26 @@ export const TransactionList = ({ transactions }: TransactionListProps) => {
               <td className="py-4 px-6 text-[#C4C4CC]">
                 {transaction.category}
               </td>
-              <td className="py-4 px-6 rounded-r-md text-[#C4C4CC]">
+              <td className="py-4 px-6 text-[#C4C4CC]">
                 {formatDate(transaction.createdAt)}
+              </td>
+              <td className="py-4 px-6 rounded-r-md">
+                <div className="flex items-center gap-3 justify-end">
+                  <button
+                    onClick={() => openEdit(transaction)}
+                    aria-label="Editar transação"
+                    className="text-[#7C7C8A] hover:text-[#00B37E] transition-colors"
+                  >
+                    <Pencil size={16} />
+                  </button>
+                  <button
+                    onClick={() => deleteTransaction(transaction.id)}
+                    aria-label="Excluir transação"
+                    className="text-[#7C7C8A] hover:text-[#F75A68] transition-colors"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
               </td>
             </tr>
           ))}

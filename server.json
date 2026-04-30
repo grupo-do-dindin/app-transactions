@@ -1,42 +1,10 @@
 {
   "transactions": [
     {
-      "id": "1",
-      "description": "Desenvolvimento de site",
-      "type": "income",
-      "category": "Venda",
-      "price": 14000,
-      "createdAt": "2023-01-06T01:31:44.314Z"
-    },
-    {
-      "id": "2",
-      "description": "Hamburguer",
-      "type": "outcome",
-      "category": "Alimentação",
-      "price": 50,
-      "createdAt": "2023-01-06T01:31:44.314Z"
-    },
-    {
-      "id": "nzhznWP-JfU",
-      "description": "desenvolvimento app",
-      "type": "income",
-      "category": "venda",
-      "price": 10000,
-      "createdAt": "2026-04-06T20:14:13.031Z"
-    },
-    {
       "id": 1776133372595,
       "createdAt": "2026-04-14T02:23:14.079Z",
       "price": 20,
       "description": "Cinema",
-      "type": "outcome",
-      "category": "Lazer"
-    },
-    {
-      "id": 1777030134365,
-      "createdAt": "2026-04-24T11:29:26.863Z",
-      "price": 150,
-      "description": "filme do michael jackson",
       "type": "income",
       "category": "Lazer"
     }
