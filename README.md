@@ -17,6 +17,7 @@ Uma aplicação de controle financeiro pessoal construída com Next.js, Tailwind
 - React 19
 - Tailwind CSS 4
 - Axios
+- Storybook
 
 ## Pré-requisitos
 
@@ -77,6 +78,7 @@ npm run dev:server
 - `npm run build` - cria versão de produção do Next.js
 - `npm run start` - inicia o servidor Next.js em modo de produção
 - `npm run lint` - executa o ESLint
+- `npm run storybook` - executa o Storybook com documentação dos componentes e páginas
 
 ## Estrutura do projeto
 
@@ -128,6 +130,6 @@ A API local é servida pelo `json-server` usando `server.json`. Ele expoe `/tran
 3. Veja o saldo atualizado automaticamente no painel superior
 4. Verifique o histórico de transações na lista abaixo
 
-## Sobre 
+## Sobre
 
-Este é o primeiro projeto do curso de pós graduação em Frontend Engineering da FIAP desenvolvido pelos pós-graduandos Camila, Lysia, Mateus, Matheus e Victor 
+Este é o primeiro projeto do curso de pós graduação em Frontend Engineering da FIAP desenvolvido pelos pós-graduandos Camila, Lysia, Mateus, Matheus e Victor
