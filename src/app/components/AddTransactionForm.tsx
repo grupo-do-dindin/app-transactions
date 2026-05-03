@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ITransaction } from "../types/transaction";
 
 interface AddTranscationFormProps {
   addTransaction: (transaction: ITransaction) => void;
+  editingTransaction?: ITransaction | null;
+  onClose?: () => void;
 }
 
 const initialTransaction: ITransaction = {
@@ -18,13 +20,37 @@ const initialTransaction: ITransaction = {
 
 export const AddTransactionForm = ({
   addTransaction,
+  editingTransaction,
+  onClose,
 }: AddTranscationFormProps) => {
   const [newTransaction, setNewTransaction] =
     useState<ITransaction>(initialTransaction);
 
+  useEffect(() => {
+    if (editingTransaction) {
+      setNewTransaction({
+        ...editingTransaction,
+        price: Math.abs(editingTransaction.price),
+      });
+    } else {
+      setNewTransaction({
+        ...initialTransaction,
+        id: Date.now(),
+        createdAt: new Date().toISOString().split("T")[0],
+      });
+    }
+  }, [editingTransaction]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    addTransaction(newTransaction);
+    const transactionToSave = {
+      ...newTransaction,
+      price:
+        newTransaction.type === "outcome"
+          ? -Math.abs(newTransaction.price)
+          : Math.abs(newTransaction.price),
+    };
+    addTransaction(transactionToSave);
 
     setNewTransaction({
       id: Date.now(),
@@ -39,15 +65,22 @@ export const AddTransactionForm = ({
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white shadow-md rounded-2xl p-6 w-full max-w-md mx-auto flex flex-col gap-4"
+      className="bg-[#202024] shadow-md rounded-2xl p-6 w-full max-w-md mx-auto flex flex-col gap-4"
     >
-      <h2 className="text-xl font-semibold text-gray-800">Nova transação</h2>
+      <div className="flex justify-between">
+        <h2 className="text-xl font-semibold text-[#E1E1E6]">
+          {editingTransaction ? "Editar transação" : "Nova transação"}
+        </h2>
+        <span className="text-[#7C7C8A] cursor-pointer" onClick={onClose}>
+          🗙
+        </span>
+      </div>
 
-      {/* Descrição */}
       <div className="flex flex-col gap-1">
-        <label className="text-sm text-gray-600">Descrição</label>
         <input
+          placeholder="Descrição"
           type="text"
+          className="border-0 bg-[#121214] h-[40px] text-[#E1E1E6] rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400"
           value={newTransaction.description}
           onChange={(e) =>
             setNewTransaction({
@@ -55,33 +88,15 @@ export const AddTransactionForm = ({
               description: e.target.value,
             })
           }
-          className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-          placeholder="Ex: Mercado"
         />
       </div>
 
-      {/* Categoria */}
       <div className="flex flex-col gap-1">
-        <label className="text-sm text-gray-600">Categoria</label>
         <input
+          placeholder="Valor"
           type="text"
-          value={newTransaction.category}
-          onChange={(e) =>
-            setNewTransaction({
-              ...newTransaction,
-              category: e.target.value,
-            })
-          }
-          className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-          placeholder="Ex: Alimentação"
-        />
-      </div>
-
-      {/* Valor */}
-      <div className="flex flex-col gap-1">
-        <label className="text-sm text-gray-600">Valor</label>
-        <input
-          type="number"
+          step="0.01"
+          className="border-0 bg-[#121214] h-[40px] text-[#E1E1E6] rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400"
           value={newTransaction.price}
           onChange={(e) =>
             setNewTransaction({
@@ -89,36 +104,64 @@ export const AddTransactionForm = ({
               price: Number(e.target.value),
             })
           }
-          className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-          placeholder="0.00"
-          step="0.01"
         />
       </div>
 
-      {/* Tipo */}
       <div className="flex flex-col gap-1">
-        <label className="text-sm text-gray-600">Tipo</label>
-        <select
-          value={newTransaction.type}
+        <input
+          placeholder="Categoria"
+          type="text"
+          list="categorias"
+          className="border-0 bg-[#121214] h-[40px] text-[#E1E1E6] rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400"
+          value={newTransaction.category}
           onChange={(e) =>
             setNewTransaction({
               ...newTransaction,
-              type: e.target.value as "income" | "outcome",
+              category: e.target.value,
             })
           }
-          className="border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
-        >
-          <option value="income">Receita</option>
-          <option value="outcome">Despesa</option>
-        </select>
+        />
+        <datalist id="categorias">
+          <option value="Alimentação" />
+          <option value="Transporte" />
+          <option value="Lazer" />
+          <option value="Saúde" />
+          <option value="Educação" />
+        </datalist>
       </div>
 
-      {/* Botão */}
+      <div className="flex justify-around gap-4">
+        <div
+          onClick={() => {
+            setNewTransaction({
+              ...newTransaction,
+              type: "income",
+            });
+          }}
+          className={`text-[#00B37E] bg-[#323238] w-[150px] h-[40px] rounded cursor-pointer  flex 
+            items-center justify-center ${newTransaction.type === "income" ? "outline outline-2" : ""}`}
+        >
+          ⬆ Entrada
+        </div>
+        <div
+          onClick={() => {
+            setNewTransaction({
+              ...newTransaction,
+              type: "outcome",
+            });
+          }}
+          className={`text-[#F75A68] bg-[#323238] w-[150px] h-[40px] rounded cursor-pointer flex 
+            items-center justify-center ${newTransaction.type === "outcome" ? "outline outline-2" : ""}`}
+        >
+          ⬇ Saída
+        </div>
+      </div>
+
       <button
         type="submit"
-        className="mt-2 bg-blue-500 text-white py-2 rounded-lg font-medium hover:bg-blue-600 transition"
+        className="bg-[#00875F] hover:bg-[#017552] rounded-md h-10 text-white transition-colors"
       >
-        Adicionar
+        {editingTransaction ? "Editar" : "Cadastrar"}
       </button>
     </form>
   );
