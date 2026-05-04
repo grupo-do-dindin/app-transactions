@@ -25,13 +25,12 @@ export const AddTransactionForm = ({
 }: AddTranscationFormProps) => {
   const [newTransaction, setNewTransaction] =
     useState<ITransaction>(initialTransaction);
+  const [priceString, setPriceString] = useState("");
 
   useEffect(() => {
     if (editingTransaction) {
-      setNewTransaction({
-        ...editingTransaction,
-        price: Math.abs(editingTransaction.price),
-      });
+      setNewTransaction({ ...editingTransaction });
+      setPriceString(String(Math.abs(editingTransaction.price).toFixed(2)).replace(/\./g, ","));
     } else {
       setNewTransaction({
         ...initialTransaction,
@@ -43,12 +42,10 @@ export const AddTransactionForm = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const price = Math.abs(Number(priceString.replace(/\,/g, ".")));
     const transactionToSave = {
       ...newTransaction,
-      price:
-        newTransaction.type === "outcome"
-          ? -Math.abs(newTransaction.price)
-          : Math.abs(newTransaction.price),
+      price: newTransaction.type === "outcome" ? -price : price,
     };
     addTransaction(transactionToSave);
 
@@ -95,15 +92,14 @@ export const AddTransactionForm = ({
         <input
           placeholder="Valor"
           type="text"
-          step="0.01"
           className="border-0 bg-[#121214] h-[40px] text-[#E1E1E6] rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400"
-          value={newTransaction.price}
-          onChange={(e) =>
-            setNewTransaction({
-              ...newTransaction,
-              price: Number(e.target.value),
-            })
-          }
+          value={priceString}
+          onChange={(e) => {
+            const value = e.target.value;            
+            const formattedValue = value.replace(/\./g, ',');
+            const cleanedValue = formattedValue.replace(/[^0-9,]/g, '');
+            setPriceString(cleanedValue);
+          }}
         />
       </div>
 

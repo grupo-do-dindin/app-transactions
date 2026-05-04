@@ -59,7 +59,7 @@ export const TransactionList = ({ transactions }: TransactionListProps) => {
               key={transaction.id}
               className="bg-[#29292E] hover:bg-[#323238] transition-colors"
             >
-              <td className="py-4 px-6 rounded-l-md text-[#C4C4CC] w-1/2">
+              <td className="py-4 px-6 rounded-l-md text-[#C4C4CC] w-1/4">
                 {transaction.description}
               </td>
               <td

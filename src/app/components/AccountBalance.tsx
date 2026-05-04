@@ -10,7 +10,7 @@ export const AccountBalance = ({ transactions }: AccountBalanceProps) => {
       if (transaction.type === "income") {
         acc.credit += transaction.price;
       } else {
-        acc.debit += transaction.price;
+        acc.debit -= transaction.price;
       }
       return acc;
     },
@@ -19,13 +19,17 @@ export const AccountBalance = ({ transactions }: AccountBalanceProps) => {
 
   const balance = summary.credit - summary.debit;
 
+  function valueFormatted(value: number): string {
+    return value.toFixed(2).replace(/\./g, ",");
+  }
+
   return (
     <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4 px-20 py-10 dark:bg-[#121214] bg-[#d1fae5]">
       <div className="bg-zinc-800 rounded-lg p-10 shadow-md flex justify-between items-center">
         <div>
           <p className="text-sm text-gray-400">Entradas</p>
           <p className="text-xl font-semibold text-white">
-            R$ {summary.credit.toFixed(2)}
+            R$ {valueFormatted(summary.credit)}
           </p>
         </div>
         <div className="text-green-400">⬆</div>
@@ -35,7 +39,7 @@ export const AccountBalance = ({ transactions }: AccountBalanceProps) => {
         <div>
           <p className="text-sm text-gray-400">Saídas</p>
           <p className="text-xl font-semibold text-white">
-            R$ {summary.debit.toFixed(2)}
+            R$ {valueFormatted(summary.debit)}
           </p>
         </div>
         <div className="text-red-400">⬇</div>
@@ -45,7 +49,7 @@ export const AccountBalance = ({ transactions }: AccountBalanceProps) => {
         <div>
           <p className="text-sm text-white/70">Total</p>
           <p className="text-xl font-semibold text-white">
-            R$ {balance.toFixed(2)}
+            R$ {valueFormatted(balance)}
           </p>
         </div>
         <div className="text-white text-xl">$</div>

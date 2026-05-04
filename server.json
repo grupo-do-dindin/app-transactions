@@ -1,12 +1,36 @@
 {
   "transactions": [
     {
-      "id": 1776133372595,
-      "createdAt": "2026-04-14T02:23:14.079Z",
-      "price": 20,
-      "description": "Cinema",
+      "id": 1777859948639,
+      "createdAt": "2026-05-04T01:59:24.197Z",
+      "price": 5764.9,
+      "description": "Salário",
       "type": "income",
+      "category": "Salário"
+    },
+    {
+      "id": 1777859979573,
+      "createdAt": "2026-05-04T01:59:58.233Z",
+      "price": -40.8,
+      "description": "Cinema",
+      "type": "outcome",
       "category": "Lazer"
+    },
+    {
+      "id": 1777860699067,
+      "createdAt": "2026-05-04T02:11:58.761Z",
+      "price": -58.7,
+      "description": "Lanche",
+      "type": "outcome",
+      "category": "Alimentação"
+    },
+    {
+      "id": 1777861344658,
+      "createdAt": "2026-05-04T02:22:51.081Z",
+      "price": 598.9,
+      "description": "Protótipo Figma",
+      "type": "income",
+      "category": "Renda extra"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
