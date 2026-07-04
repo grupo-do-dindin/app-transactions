@@ -31,6 +31,14 @@
       "description": "Cinema",
       "type": "outcome",
       "category": "Lazer"
+    },
+    {
+      "id": 1783190605447,
+      "createdAt": "2026-07-04T18:43:49.940Z",
+      "price": 300,
+      "description": "Ifood",
+      "type": "income",
+      "category": "Alimentação"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

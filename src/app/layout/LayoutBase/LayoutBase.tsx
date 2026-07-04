@@ -8,7 +8,7 @@ type LayoutBaseProps = {
 
 export const LayoutBase = ({ children }: LayoutBaseProps) => {
   return (
-    <div className="w-full min-h-screen flex flex-col bg-white dark:bg-[#202024] text-black dark:text-whit">
+    <div className="w-full min-h-screen flex flex-col bg-white dark:bg-[#202024] text-black dark:text-white">
       <Header />
 
       <main className="flex-1 flex flex-col items-center justify-center">

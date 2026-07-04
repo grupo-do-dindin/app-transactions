@@ -58,3 +58,33 @@ a {
     color-scheme: light;
   }
 } */
+
+@keyframes wiggle {
+  0% { transform: rotate(-0.5deg) scale(0.99); }
+  50% { transform: rotate(0.5deg) scale(1.01); }
+  100% { transform: rotate(-0.5deg) scale(0.99); }
+}
+
+.animate-wiggle {
+  animation: wiggle 0.28s ease-in-out infinite;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.2);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.4);
+}
+
