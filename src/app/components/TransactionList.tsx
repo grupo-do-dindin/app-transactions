@@ -35,20 +35,21 @@ export const TransactionList = ({ transactions }: TransactionListProps) => {
   const [maxPrice, setMaxPrice] = useState("");
   const [selectedType, setSelectedType] = useState<"all" | "income" | "outcome">("all");
 
+  // Paginação
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
   const openEdit = useModalStore((state) => state.openEdit);
   const { deleteTransaction } = useTransactions();
 
-  // Extrai lista única de categorias existentes nas transações
   const categories = Array.from(
     new Set(transactions.map((t) => t.category).filter(Boolean))
   );
 
-  // Lógica combinada de filtros
   const filtered = transactions.filter((t) => {
     if (search && !t.description.toLowerCase().includes(search.toLowerCase())) {
       return false;
     }
-
     if (selectedCategory && t.category !== selectedCategory) {
       return false;
     }
@@ -106,10 +107,18 @@ export const TransactionList = ({ transactions }: TransactionListProps) => {
     selectedType !== "all" ? 1 : 0,
   ].reduce((a, b) => a + b, 0);
 
+  // Paginação dos dados
+  const totalItems = filtered.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const actualCurrentPage = Math.max(1, Math.min(currentPage, totalPages || 1));
 
+  const startIndex = (actualCurrentPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+  const paginatedTransactions = filtered.slice(startIndex, endIndex);
 
   return (
     <div className="w-full max-w-4xl mx-auto mt-6 px-4">
+      {/* Barra de Busca e Botão de Filtros */}
       <div className="flex gap-3 mb-4">
         <input
           type="text"
@@ -136,14 +145,16 @@ export const TransactionList = ({ transactions }: TransactionListProps) => {
         </button>
       </div>
 
+      {/* Painel de filtros */}
       {isFiltersOpen && (
         <div className="bg-[#D1FAE5] dark:bg-[#202024] border border-green-200 dark:border-[#323238] rounded-md p-5 mb-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 transition-all duration-300">
+          {/* Categoria */}
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-semibold text-green-800 dark:text-[#7C7C8A]">Categoria</label>
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="bg-white dark:bg-[#121214] border border-green-200 dark:border-[#323238] text-black dark:text-[#C4C4CC] rounded px-3 py-2 text-sm focus:outline-none"
+              className="bg-white dark:bg-[#121214] border border-green-200 dark:border-[#323238] text-black dark:text-[#C4C4CC] rounded px-2 py-2 text-sm focus:outline-none"
             >
               <option value="">Todas</option>
               {categories.map((cat) => (
@@ -154,6 +165,7 @@ export const TransactionList = ({ transactions }: TransactionListProps) => {
             </select>
           </div>
 
+          {/* Tipo de transação */}
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-semibold text-green-800 dark:text-[#7C7C8A]">Tipo</label>
             <div className="flex bg-white dark:bg-[#121214] border border-green-200 dark:border-[#323238] rounded p-0.5 h-[38px]">
@@ -210,6 +222,7 @@ export const TransactionList = ({ transactions }: TransactionListProps) => {
             </div>
           </div>
 
+          {/* Período */}
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-semibold text-green-800 dark:text-[#7C7C8A]">Período</label>
             <div className="flex gap-2">
@@ -298,78 +311,179 @@ export const TransactionList = ({ transactions }: TransactionListProps) => {
         </div>
       )}
 
-      {filtered.length === 0 ? (
+      {/* Tabela de transações */}
+      {paginatedTransactions.length === 0 ? (
         <div className="w-full text-center py-12 bg-[#D1FAE5]/30 dark:bg-[#29292E]/30 rounded-md border border-dashed border-green-200 dark:border-[#323238] my-6">
           <p className="text-black dark:text-[#7C7C8A] text-sm">Nenhuma transação encontrada para os filtros selecionados.</p>
         </div>
       ) : (
-        <table className="w-full border-separate border-spacing-y-2">
-          <tbody>
-            {filtered.map((transaction) => (
-              <tr
-                key={transaction.id}
-                className="bg-[#D1FAE5] dark:bg-[#29292E] hover:bg-green-200 dark:hover:bg-[#323238] transition-colors"
-              >
-                <td className="py-4 px-6 rounded-l-md text-black dark:text-[#C4C4CC] w-1/4">
-                  {transaction.description}
-                </td>
-                <td
-                  className={`py-4 px-6 font-medium ${transaction.price >= 0 ? "text-[#00B37E]" : "text-[#F75A68]"
-                    }`}
+        <>
+          <table className="w-full border-separate border-spacing-y-2">
+            <tbody>
+              {paginatedTransactions.map((transaction) => (
+                <tr
+                  key={transaction.id}
+                  className="bg-[#D1FAE5] dark:bg-[#29292E] hover:bg-green-200 dark:hover:bg-[#323238] transition-colors"
                 >
-                  {transaction.price < 0 ? "- " : ""}R${" "}
-                  {formatCurrency(Math.abs(transaction.price))}
-                </td>
-                <td className="py-4 px-6 text-black dark:text-[#C4C4CC]">
-                  {transaction.category}
-                </td>
-                <td className="py-4 px-6 text-black dark:text-[#C4C4CC]">
-                  {formatDate(transaction.createdAt)}
-                </td>
-                <td className="py-4 px-6 rounded-r-md">
-                  <div className="flex items-center gap-3 justify-end">
-                    <button
-                      onClick={() => openEdit(transaction)}
-                      aria-label="Editar transação"
-                      className="text-[#7C7C8A] hover:text-[#00B37E] transition-colors cursor-pointer"
-                    >
-                      <Pencil size={16} />
-                    </button>
-                    <button
-                      onClick={() => deleteTransaction(transaction.id)}
-                      aria-label="Excluir transação"
-                      className="text-[#7C7C8A] hover:text-[#F75A68] transition-colors cursor-pointer"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                </td>
-                <td className="py-4 px-6 text-black dark:text-[#C4C4CC] rounded-r-md">
-                  {transaction.receipt ? (
-                    <div className="relative w-12 h-12 overflow-hidden rounded-lg bg-[#f6fdf8] dark:bg-[#111214] group">
-                      <button
-                        type="button"
-                        onClick={() => setSelectedReceipt(transaction.receipt!)}
-                        className="absolute inset-0 z-10"
-                        aria-label="Abrir recibo"
-                      />
-                      <img
-                        src={transaction.receipt}
-                        alt="Recibo"
-                        className="h-full w-full object-cover transition duration-200 group-hover:blur-sm"
-                      />
-                      <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/0 transition duration-200 group-hover:bg-black/30">
-                        <Search className="h-6 w-6 text-white opacity-0 transition duration-200 group-hover:opacity-100" />
+                  <td className="py-4 px-6 rounded-l-md text-black dark:text-[#C4C4CC] w-1/5">
+                    {transaction.description}
+                  </td>
+                  <td
+                    className={`py-4 px-6 font-medium ${transaction.price >= 0 ? "text-[#00B37E]" : "text-[#F75A68]"
+                      }`}
+                  >
+                    {transaction.price < 0 ? "- " : ""}R${" "}
+                    {formatCurrency(Math.abs(transaction.price))}
+                  </td>
+                  <td className="py-4 px-6 text-black dark:text-[#C4C4CC]">
+                    {transaction.category}
+                  </td>
+                  <td className="py-4 px-6 text-black dark:text-[#C4C4CC]">
+                    {formatDate(transaction.createdAt)}
+                  </td>
+                  <td className="py-4 px-6 text-black dark:text-[#C4C4CC]">
+                    {transaction.receipt ? (
+                      <div className="relative w-12 h-12 overflow-hidden rounded-lg bg-[#f6fdf8] dark:bg-[#111214] group">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedReceipt(transaction.receipt!)}
+                          className="absolute inset-0 z-10"
+                          aria-label="Abrir recibo"
+                        />
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={transaction.receipt}
+                          alt="Recibo"
+                          className="h-full w-full object-cover transition duration-200 group-hover:blur-sm"
+                        />
+                        <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/0 transition duration-200 group-hover:bg-black/30">
+                          <Search className="h-6 w-6 text-white opacity-0 transition duration-200 group-hover:opacity-100" />
+                        </div>
                       </div>
+                    ) : (
+                      <span className="text-xs text-[#7C7C8A]">—</span>
+                    )}
+                  </td>
+                  <td className="py-4 px-6 rounded-r-md">
+                    <div className="flex items-center gap-3 justify-end">
+                      <button
+                        onClick={() => openEdit(transaction)}
+                        aria-label="Editar transação"
+                        className="text-[#7C7C8A] hover:text-[#00B37E] transition-colors cursor-pointer"
+                      >
+                        <Pencil size={16} />
+                      </button>
+                      <button
+                        onClick={() => deleteTransaction(transaction.id)}
+                        aria-label="Excluir transação"
+                        className="text-[#7C7C8A] hover:text-[#F75A68] transition-colors cursor-pointer"
+                      >
+                        <Trash2 size={16} />
+                      </button>
                     </div>
-                  ) : (
-                    <span className="text-xs text-[#7C7C8A]">—</span>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {/* Paginação */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-4 border-t border-green-200 dark:border-[#323238]">
+            <span className="text-sm text-black dark:text-[#C4C4CC]">
+              Exibindo{" "}
+              <span className="font-semibold">
+                {totalItems === 0 ? 0 : startIndex + 1}
+              </span>{" "}
+              a <span className="font-semibold">{endIndex}</span> de{" "}
+              <span className="font-semibold">{totalItems}</span> transações
+            </span>
+
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-green-800 dark:text-[#7C7C8A] hidden sm:inline">
+                  Itens por página:
+                </span>
+                <select
+                  value={itemsPerPage}
+                  onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                  className="bg-white dark:bg-[#121214] border border-green-200 dark:border-[#323238] text-black dark:text-[#C4C4CC] rounded px-2 py-1 text-xs focus:outline-none"
+                >
+                  <option value={10}>10</option>
+                  <option value={20}>20</option>
+                  <option value={50}>50</option>
+                  <option value={100}>100</option>
+                </select>
+              </div>
+
+              {/* Botões de navegação */}
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage(1)}
+                  disabled={actualCurrentPage === 1}
+                  className="px-2.5 py-1.5 rounded text-xs border border-green-200 dark:border-[#323238] bg-white dark:bg-[#121214] text-black dark:text-[#C4C4CC] hover:bg-green-50 dark:hover:bg-[#29292E] disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                >
+                  Primeira
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage(actualCurrentPage - 1)}
+                  disabled={actualCurrentPage === 1}
+                  className="px-2.5 py-1.5 rounded text-xs border border-green-200 dark:border-[#323238] bg-white dark:bg-[#121214] text-black dark:text-[#C4C4CC] hover:bg-green-50 dark:hover:bg-[#29292E] disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                >
+                  Anterior
+                </button>
+
+                {/* Números das páginas */}
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  let pageNumber = 1;
+                  if (totalPages <= 5) {
+                    pageNumber = i + 1;
+                  } else {
+                    if (actualCurrentPage <= 3) {
+                      pageNumber = i + 1;
+                    } else if (actualCurrentPage >= totalPages - 2) {
+                      pageNumber = totalPages - 4 + i;
+                    } else {
+                      pageNumber = actualCurrentPage - 2 + i;
+                    }
+                  }
+
+                  return (
+                    <button
+                      key={pageNumber}
+                      type="button"
+                      onClick={() => setCurrentPage(pageNumber)}
+                      className={`w-8 h-8 rounded text-xs font-semibold flex items-center justify-center border transition-all cursor-pointer ${actualCurrentPage === pageNumber
+                        ? "bg-[#00875F] text-white border-[#00875F]"
+                        : "border-green-200 dark:border-[#323238] bg-white dark:bg-[#121214] text-black dark:text-[#C4C4CC] hover:bg-green-50 dark:hover:bg-[#29292E]"
+                        }`}
+                    >
+                      {pageNumber}
+                    </button>
+                  );
+                })}
+
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage(actualCurrentPage + 1)}
+                  disabled={actualCurrentPage === totalPages}
+                  className="px-2.5 py-1.5 rounded text-xs border border-green-200 dark:border-[#323238] bg-white dark:bg-[#121214] text-black dark:text-[#C4C4CC] hover:bg-green-50 dark:hover:bg-[#29292E] disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                >
+                  Próxima
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage(totalPages)}
+                  disabled={actualCurrentPage === totalPages}
+                  className="px-2.5 py-1.5 rounded text-xs border border-green-200 dark:border-[#323238] bg-white dark:bg-[#121214] text-black dark:text-[#C4C4CC] hover:bg-green-50 dark:hover:bg-[#29292E] disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                >
+                  Última
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
       )}
 
       <ReceiptModal
