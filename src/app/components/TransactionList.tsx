@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ITransaction } from "../types/transaction";
 import { useModalStore } from "../store/useModalStore";
 import { useTransactions } from "../hooks/useTransactions";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, Search } from "lucide-react";
+import { ReceiptModal } from "./ReceiptModal/ReceiptModal";
 
 interface TransactionListProps {
   transactions: ITransaction[];
@@ -25,14 +26,17 @@ function formatDate(dateStr: string): string {
 
 export const TransactionList = ({ transactions }: TransactionListProps) => {
   const [search, setSearch] = useState("");
+  const [selectedReceipt, setSelectedReceipt] = useState<string | null>(null);
   const openEdit = useModalStore((state) => state.openEdit);
   const { deleteTransaction } = useTransactions();
 
   const filtered = search
     ? transactions.filter((t) =>
-        t.description.toLowerCase().includes(search.toLowerCase()),
-      )
+      t.description.toLowerCase().includes(search.toLowerCase()),
+    )
     : transactions;
+
+
 
   return (
     <div className="w-full max-w-4xl mx-auto mt-6 px-4">
@@ -63,9 +67,8 @@ export const TransactionList = ({ transactions }: TransactionListProps) => {
                 {transaction.description}
               </td>
               <td
-                className={`py-4 px-6 font-medium ${
-                  transaction.price >= 0 ? "text-[#00B37E]" : "text-[#F75A68]"
-                }`}
+                className={`py-4 px-6 font-medium ${transaction.price >= 0 ? "text-[#00B37E]" : "text-[#F75A68]"
+                  }`}
               >
                 {transaction.price < 0 ? "- " : ""}R${" "}
                 {formatCurrency(Math.abs(transaction.price))}
@@ -76,7 +79,7 @@ export const TransactionList = ({ transactions }: TransactionListProps) => {
               <td className="py-4 px-6 text-black dark:text-[#C4C4CC]">
                 {formatDate(transaction.createdAt)}
               </td>
-              <td className="py-4 px-6 rounded-r-md">
+              <td className="py-4 px-6">
                 <div className="flex items-center gap-3 justify-end">
                   <button
                     onClick={() => openEdit(transaction)}
@@ -94,10 +97,37 @@ export const TransactionList = ({ transactions }: TransactionListProps) => {
                   </button>
                 </div>
               </td>
+              <td className="py-4 px-6 text-black dark:text-[#C4C4CC] rounded-r-md">
+                {transaction.receipt ? (
+                  <div className="relative w-12 h-12 overflow-hidden rounded-lg bg-[#f6fdf8] dark:bg-[#111214] group">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedReceipt(transaction.receipt!)}
+                      className="absolute inset-0 z-10"
+                      aria-label="Abrir recibo"
+                    />
+                    <img
+                      src={transaction.receipt}
+                      alt="Recibo"
+                      className="h-full w-full object-cover transition duration-200 group-hover:blur-sm"
+                    />
+                    <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/0 transition duration-200 group-hover:bg-black/30">
+                      <Search className="h-6 w-6 text-white opacity-0 transition duration-200 group-hover:opacity-100" />
+                    </div>
+                  </div>
+                ) : (
+                  <span className="text-xs text-[#7C7C8A]">—</span>
+                )}
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
+
+      <ReceiptModal
+        receiptUrl={selectedReceipt}
+        onClose={() => setSelectedReceipt(null)}
+      />
     </div>
   );
 };
