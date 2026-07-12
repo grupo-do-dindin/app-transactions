@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ThemeToggle } from "./ThemeToggle";
 import { useModalStore } from "@/app/store/useModalStore";
+import { Button } from "@grupo-do-dindin/design-system";
 
 export const Header = () => {
   const openModal = useModalStore((state) => state.open);
@@ -19,28 +20,7 @@ export const Header = () => {
         </span>
       </Link>
       <div className="flex items-center gap-2">
-        {isDashboard && (
-          <button
-            onClick={openModal}
-            className="
-              inline-flex items-center justify-center
-              px-6 py-2
-              rounded-md
-              text-white
-              bg-green-700
-              hover:bg-green-800
-              active:bg-green-900
-              transition
-              focus:outline-none
-              focus:ring-2
-              focus:ring-green-400
-              focus:ring-offset-2
-              font-medium
-            "
-          >
-            Nova transação
-          </button>
-        )}
+        {isDashboard && <Button onClick={openModal}>Nova transação</Button>}
         <ThemeToggle />
       </div>
     </header>

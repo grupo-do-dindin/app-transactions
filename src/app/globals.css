@@ -1,5 +1,6 @@
 @import "tailwindcss/theme";
 @import "tailwindcss/utilities";
+/* @import "@grupo-do-dindin/design-system/dist/design-system.css"; */
 
 @custom-variant dark (&:where(.dark, .dark *));
 

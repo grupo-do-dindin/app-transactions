@@ -9,20 +9,60 @@
       "category": "Salário"
     },
     {
-      "id": 1777859979573,
-      "createdAt": "2026-05-04T01:59:58.233Z",
-      "price": -40.8,
+      "id": 1777923971852,
+      "createdAt": "2026-05-04T19:46:29.718Z",
+      "price": 80,
       "description": "Cinema",
-      "type": "outcome",
+      "type": "income",
       "category": "Lazer"
     },
     {
-      "id": 1777860699067,
-      "createdAt": "2026-05-04T02:11:58.761Z",
-      "price": -58.7,
-      "description": "Lanche",
+      "id": 1777923996060,
+      "createdAt": "2026-05-04T19:47:11.495Z",
+      "price": -200,
+      "description": "Pedreiro",
+      "type": "outcome",
+      "category": "Saúde"
+    },
+    {
+      "id": 1777925528941,
+      "createdAt": "2026-05-04T20:12:26.410Z",
+      "price": -260,
+      "description": "Mercado",
       "type": "outcome",
       "category": "Alimentação"
+    },
+    {
+      "id": 1777925891487,
+      "createdAt": "2026-05-04T20:18:32.806Z",
+      "price": 800,
+      "description": "Vale alimentação",
+      "type": "income",
+      "category": "Alimentação"
+    },
+    {
+      "id": 1777925921741,
+      "createdAt": "2026-05-04T20:18:55.224Z",
+      "price": -600,
+      "description": "Mercado",
+      "type": "outcome",
+      "category": "Alimentação"
+    },
+    {
+      "id": 1777926181124,
+      "createdAt": "2026-05-04T20:23:22.041Z",
+      "price": 400,
+      "description": "Vale refeição",
+      "type": "income",
+      "category": "Alimentação"
+    },
+    {
+      "id": 1777926208751,
+      "createdAt": "2026-05-04T20:23:41.491Z",
+      "price": -80,
+      "description": "Uber",
+      "type": "outcome",
+      "category": "Transporte"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
