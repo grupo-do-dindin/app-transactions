@@ -5,6 +5,7 @@ export interface ITransaction {
   category: string;
   price: number;
   createdAt: string;
+  receipt?:string;
 }
 
 export type CreateTransactionInput = Omit<ITransaction, 'id' | 'createdAt'>

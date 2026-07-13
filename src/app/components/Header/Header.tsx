@@ -9,7 +9,7 @@ import { Button } from "@grupo-do-dindin/design-system";
 export const Header = () => {
   const openModal = useModalStore((state) => state.open);
   const pathname = usePathname();
-  const isDashboard = pathname === "/dashboard";
+  const isDashboard = pathname === "/";
 
   return (
     <header className="w-full h-20  flex items-center justify-between px-20 py-6 dark:bg-[#121214] bg-[#d1fae5]">
