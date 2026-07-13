@@ -1,97 +1,132 @@
-import { useCallback } from 'react'
-import { api } from '../lib/axios'
-import { useTransactionsStore } from '../store/useTransactionsStore'
-import { CreateTransactionInput, UpdateTransactionInput } from '../types/transaction'
+import { useCallback } from "react";
+import { api } from "../lib/axios";
+import { useTransactionsStore } from "../store/useTransactionsStore";
+import {
+  CreateTransactionInput,
+  UpdateTransactionInput,
+} from "../types/transaction";
 
 export function useTransactions() {
-    const {
-        transactions,
-        isLoading,
-        error,
-        setTransactions,
-        addTransaction,
-        updateTransaction,
-        removeTransaction,
-        setLoading,
-        setError,
-    } = useTransactionsStore()
+  const {
+    transactions,
+    isLoading,
+    error,
+    setTransactions,
+    addTransaction,
+    updateTransaction,
+    removeTransaction,
+    setLoading,
+    setError,
+  } = useTransactionsStore();
 
-    // ─── READ ────────────────────────────────────────────────
-    const fetchTransactions = useCallback(async (query?: string) => {
-        setLoading(true)
-        setError(null)
-        try {
-            const { data } = await api.get('/transactions', {
-                params: {
-                    _sort: 'createdAt',
-                    _order: 'desc',
-                    ...(query && { q: query }), // busca por texto (json-server suporta ?q=)
-                },
-            })
-            console.log('Dados recebidos do servidor:', data)
-            setTransactions(data)
-        } catch (err) {
-            console.error('Erro ao buscar transações:', err)
-            setError('Erro ao buscar transações.')
-        } finally {
-            setLoading(false)
+  const fetchTransactions = useCallback(
+    async (query?: string) => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetch("/api/transactions");
+        const data = await response.json();
+        setTransactions(data.result.transactions);
+      } catch (err) {
+        console.error("Erro ao buscar transações:", err);
+        setError("Erro ao buscar transações.");
+        setTransactions([]);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [setLoading, setError, setTransactions],
+  );
+
+  const createTransaction = useCallback(
+    async (input: CreateTransactionInput) => {
+      setError(null);
+
+      try {
+        const response = await fetch("/api/transactions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(input),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error ?? "Erro ao criar transação");
         }
-    }, [setLoading, setError, setTransactions])
 
-    // ─── CREATE ──────────────────────────────────────────────
-    const createTransaction = useCallback(async (input: CreateTransactionInput) => {
-        setError(null)
-        try {
-            const { data } = await api.post('/transactions', {
-                ...input,
-                createdAt: new Date().toISOString(),
-            })
-            console.log('Transação criada:', data)
-            addTransaction(data)
-            return data
-        } catch (err) {
-            console.error('Erro ao criar transação:', err)
-            setError('Erro ao criar transação.')
+        addTransaction(data.result);
+
+        return data;
+      } catch (err) {
+        console.error("Erro ao criar transação:", err);
+        setError("Erro ao criar transação.");
+      }
+    },
+    [addTransaction],
+  );
+
+  const editTransaction = useCallback(
+    async (id: string, input: UpdateTransactionInput) => {
+      setError(null);
+      try {
+        const response = await fetch(`/api/transactions/${id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(input),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error ?? "Erro ao atualizar transação");
         }
-    }, [setError, addTransaction])
 
-    // ─── UPDATE ──────────────────────────────────────────────
-    const editTransaction = useCallback(
-        async (id: number, input: UpdateTransactionInput) => {
-            setError(null)
-            try {
-                const { data } = await api.patch(`/transactions/${id}`, input)
-                console.log('Transação atualizada:', data)
-                updateTransaction(id, data)
-                return data
-            } catch (err) {
-                console.error('Erro ao atualizar transação:', err)
-                setError('Erro ao atualizar transação.')
-            }
-        },
-        [setError, updateTransaction]
-    )
+        updateTransaction(id, data.result);
 
-    // ─── DELETE ──────────────────────────────────────────────
-    const deleteTransaction = useCallback(async (id: number) => {
-        setError(null)
-        try {
-            await api.delete(`/transactions/${id}`)
-            console.log('Transação deletada:', id)
-            removeTransaction(id)
-        } catch (err) {
-            console.error('Erro ao deletar transação:', err)
-            setError('Erro ao deletar transação.')
+        return data;
+      } catch (err) {
+        console.error("Erro ao atualizar transação:", err);
+        setError("Erro ao atualizar transação.");
+      }
+    },
+    [setError, updateTransaction],
+  );
+
+  const deleteTransaction = useCallback(
+    async (id: string) => {
+      setError(null);
+      try {
+        const response = await fetch(`/api/transactions/${id}`, {
+          method: "DELETE",
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error ?? "Erro ao deletar transação");
         }
-    }, [setError, removeTransaction])
 
-    return {
-        transactions,
-        isLoading,
-        error,
-        fetchTransactions,
-        createTransaction,
-        editTransaction,
-        deleteTransaction,
-    }
+        removeTransaction(id);
+      } catch (err) {
+        console.error("Erro ao deletar transação:", err);
+        setError("Erro ao deletar transação.");
+      }
+    },
+    [setError, removeTransaction],
+  );
+
+  return {
+    transactions,
+    isLoading,
+    error,
+    fetchTransactions,
+    createTransaction,
+    editTransaction,
+    deleteTransaction,
+  };
 }

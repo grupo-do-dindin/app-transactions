@@ -11,10 +11,11 @@ interface TransactionListProps {
 }
 
 function formatCurrency(value: number): string {
-  return value.toLocaleString("pt-BR", {
+  const resp = value.toLocaleString("pt-BR", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
+  return resp;
 }
 
 function formatDate(dateStr: string): string {
@@ -28,11 +29,7 @@ export const TransactionList = ({ transactions }: TransactionListProps) => {
   const openEdit = useModalStore((state) => state.openEdit);
   const { deleteTransaction } = useTransactions();
 
-  const filtered = search
-    ? transactions.filter((t) =>
-        t.description.toLowerCase().includes(search.toLowerCase()),
-      )
-    : transactions;
+  const filtered = transactions;
 
   return (
     <div className="w-full max-w-4xl mx-auto mt-6 px-4">
@@ -60,22 +57,22 @@ export const TransactionList = ({ transactions }: TransactionListProps) => {
               className=" bg-[#D1FAE5] dark:bg-[#29292E] hover:bg-green-200 dark:hover:bg-[#323238] transition-colors"
             >
               <td className="py-4 px-6 rounded-l-md text-black dark:text-[#C4C4CC] w-1/4">
-                {transaction.description}
+                {new Date(transaction.date).toLocaleString("pt-BR")}
               </td>
+
+              {/* CATEGORIA */}
+              <td className="py-4 px-6 text-[#C4C4CC]">{transaction.to}</td>
+
+              {/* VALOR */}
               <td
                 className={`py-4 px-6 font-medium ${
-                  transaction.price >= 0 ? "text-[#00B37E]" : "text-[#F75A68]"
+                  transaction.value >= 0 ? "text-[#00B37E]" : "text-[#F75A68]"
                 }`}
               >
-                {transaction.price < 0 ? "- " : ""}R${" "}
-                {formatCurrency(Math.abs(transaction.price))}
+                {transaction.value < 0 ? "- " : ""}R${" "}
+                {formatCurrency(Math.abs(transaction.value))}
               </td>
-              <td className="py-4 px-6 text-black dark:text-[#C4C4CC]">
-                {transaction.category}
-              </td>
-              <td className="py-4 px-6 text-black dark:text-[#C4C4CC]">
-                {formatDate(transaction.createdAt)}
-              </td>
+
               <td className="py-4 px-6 rounded-r-md">
                 <div className="flex items-center gap-3 justify-end">
                   <button

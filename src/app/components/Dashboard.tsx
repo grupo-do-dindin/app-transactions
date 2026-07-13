@@ -13,7 +13,7 @@ interface DashboardViewProps {
   isModalOpen: boolean;
   editingTransaction: ITransaction | null;
   onAddTransaction: (data: any) => void;
-  onEditTransaction: (id: number, data: any) => void;
+  onEditTransaction: (id: string, data: any) => void;
   onCloseModal: () => void;
 }
 

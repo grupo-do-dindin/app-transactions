@@ -10,12 +10,15 @@ interface AddTranscationFormProps {
 }
 
 const initialTransaction: ITransaction = {
-  id: Date.now(),
-  createdAt: new Date().toISOString().split("T")[0],
-  price: 0,
-  description: "",
-  type: "income",
-  category: "",
+  accountId: "",
+  id: "",
+  date: new Date().toISOString().split("T")[0],
+  from: "",
+  to: "",
+  anexo: "",
+  type: "Credit",
+  urlAnexo: "",
+  value: 0,
 };
 
 export const AddTransactionForm = ({
@@ -26,16 +29,22 @@ export const AddTransactionForm = ({
   const [newTransaction, setNewTransaction] =
     useState<ITransaction>(initialTransaction);
   const [priceString, setPriceString] = useState("");
+  const price = Number(priceString.replace(",", "."));
 
   useEffect(() => {
     if (editingTransaction) {
       setNewTransaction({ ...editingTransaction });
-      setPriceString(String(Math.abs(editingTransaction.price).toFixed(2)).replace(/\./g, ","));
+      setPriceString(
+        String(Math.abs(editingTransaction.value).toFixed(2)).replace(
+          /\./g,
+          ",",
+        ),
+      );
     } else {
       setNewTransaction({
         ...initialTransaction,
-        id: Date.now(),
-        createdAt: new Date().toISOString().split("T")[0],
+        accountId: "", // passar aqui
+        date: new Date().toISOString().split("T")[0],
       });
     }
   }, [editingTransaction]);
@@ -45,17 +54,21 @@ export const AddTransactionForm = ({
     const price = Math.abs(Number(priceString.replace(/\,/g, ".")));
     const transactionToSave = {
       ...newTransaction,
-      price: newTransaction.type === "outcome" ? -price : price,
+      value: newTransaction.type === "Debit" ? -price : price,
+      date: new Date().toISOString().split("T")[0],
     };
     addTransaction(transactionToSave);
 
     setNewTransaction({
-      id: Date.now(),
-      createdAt: new Date().toISOString().split("T")[0],
-      price: 0,
-      description: "",
-      type: "income",
-      category: "",
+      id: "",
+      accountId: "",
+      date: new Date().toISOString().split("T")[0],
+      from: "",
+      to: "",
+      anexo: "",
+      type: "Credit",
+      urlAnexo: "",
+      value: 0,
     });
   };
 
@@ -75,30 +88,16 @@ export const AddTransactionForm = ({
 
       <div className="flex flex-col gap-1">
         <input
-          placeholder="Descrição"
-          type="text"
-          className="border-0  dark:bg-[#121214] h-[40px] dark:text-[#E1E1E6] rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400"
-          value={newTransaction.description}
-          onChange={(e) =>
-            setNewTransaction({
-              ...newTransaction,
-              description: e.target.value,
-            })
-          }
-        />
-      </div>
-
-      <div className="flex flex-col gap-1">
-        <input
           placeholder="Valor"
           type="text"
           className="border-0 dark:bg-[#121214] h-[40px] dark:text-[#E1E1E6] rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400"
           value={priceString}
           onChange={(e) => {
-            const value = e.target.value;
-            const formattedValue = value.replace(/\./g, ',');
-            const cleanedValue = formattedValue.replace(/[^0-9,]/g, '');
-            setPriceString(cleanedValue);
+            const value = e.target.value.replace(/\./g, ",");
+
+            if (/^\d*(,\d{0,2})?$/.test(value)) {
+              setPriceString(value);
+            }
           }}
         />
       </div>
@@ -109,11 +108,11 @@ export const AddTransactionForm = ({
           type="text"
           list="categorias"
           className="border-0 dark:bg-[#121214] h-[40px] dark:text-[#E1E1E6] rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400"
-          value={newTransaction.category}
+          value={newTransaction.to}
           onChange={(e) =>
             setNewTransaction({
               ...newTransaction,
-              category: e.target.value,
+              to: e.target.value,
             })
           }
         />
@@ -131,11 +130,11 @@ export const AddTransactionForm = ({
           onClick={() => {
             setNewTransaction({
               ...newTransaction,
-              type: "income",
+              type: "Credit",
             });
           }}
           className={`text-[#00B37E] dark:bg-[#323238] w-[150px] h-[40px] border rounded cursor-pointer  flex 
-            items-center justify-center ${newTransaction.type === "income" ? "outline outline-2" : ""}`}
+            items-center justify-center ${newTransaction.type === "Credit" ? "outline outline-2" : ""}`}
         >
           ⬆ Entrada
         </div>
@@ -143,11 +142,11 @@ export const AddTransactionForm = ({
           onClick={() => {
             setNewTransaction({
               ...newTransaction,
-              type: "outcome",
+              type: "Debit",
             });
           }}
           className={`text-[#F75A68] dark:bg-[#323238] w-[150px] h-[40px] border rounded cursor-pointer flex 
-            items-center justify-center ${newTransaction.type === "outcome" ? "outline outline-2" : ""}`}
+            items-center justify-center ${newTransaction.type === "Debit" ? "outline outline-2" : ""}`}
         >
           ⬇ Saída
         </div>
@@ -155,7 +154,8 @@ export const AddTransactionForm = ({
 
       <button
         type="submit"
-        className="bg-[#00875F] hover:bg-[#017552] rounded-md h-10 text-white transition-colors"
+        className="bg-[#00875F] hover:bg-[#017552] rounded-md h-10 text-white transition-colors disabled:bg-[#ffffff30] disabled:cursor-not-allowed disabled:text-[#ffffff54]"
+        disabled={price <= 0 || !newTransaction.to}
       >
         {editingTransaction ? "Editar" : "Cadastrar"}
       </button>

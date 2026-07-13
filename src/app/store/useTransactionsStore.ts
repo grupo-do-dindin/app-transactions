@@ -7,8 +7,8 @@ interface TransactionsState {
     error: string | null
     setTransactions: (transactions: ITransaction[]) => void
     addTransaction: (transaction: ITransaction) => void
-    updateTransaction: (id: number, updated: UpdateTransactionInput) => void
-    removeTransaction: (id: number) => void
+    updateTransaction: (id: string, updated: UpdateTransactionInput) => void
+    removeTransaction: (id: string) => void
     setLoading: (value: boolean) => void
     setError: (message: string | null) => void
 }
