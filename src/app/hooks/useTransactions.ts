@@ -24,7 +24,7 @@ export function useTransactions() {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch("/api/transactions");
+        const response = await fetch("transactions/api/transactions");
         const data = await response.json();
         setTransactions(data.result.transactions);
       } catch (err) {
@@ -43,7 +43,7 @@ export function useTransactions() {
       setError(null);
 
       try {
-        const response = await fetch("/api/transactions", {
+        const response = await fetch("transactions/api/transactions", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -72,7 +72,7 @@ export function useTransactions() {
     async (id: string, input: UpdateTransactionInput) => {
       setError(null);
       try {
-        const response = await fetch(`/api/transactions/${id}`, {
+        const response = await fetch(`transactions/api/transactions/${id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -101,7 +101,7 @@ export function useTransactions() {
     async (id: string) => {
       setError(null);
       try {
-        const response = await fetch(`/api/transactions/${id}`, {
+        const response = await fetch(`transactions/api/transactions/${id}`, {
           method: "DELETE",
         });
 
