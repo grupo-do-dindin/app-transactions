@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   experimental: {
     externalDir: true,
   },
+  basePath: "/transactions",
 };
 
 export default nextConfig;

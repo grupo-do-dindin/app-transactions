@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { ITransaction } from "../types/transaction";
+import { ReceiptModal } from "./ReceiptModal/ReceiptModal";
+import { ImageUpload } from "./ImageUpload/ImageUpload";
 
 interface AddTranscationFormProps {
   addTransaction: (transaction: ITransaction) => void;
@@ -30,6 +32,8 @@ export const AddTransactionForm = ({
     useState<ITransaction>(initialTransaction);
   const [priceString, setPriceString] = useState("");
   const price = Number(priceString.replace(",", "."));
+  const [receiptDataUrl, setReceiptDataUrl] = useState<string | null>(null);
+  const [selectedReceipt, setSelectedReceipt] = useState<string | null>(null);
 
   useEffect(() => {
     if (editingTransaction) {
@@ -40,14 +44,19 @@ export const AddTransactionForm = ({
           ",",
         ),
       );
+      setReceiptDataUrl(editingTransaction.urlAnexo ?? null);
+      setSelectedReceipt(null);
     } else {
       setNewTransaction({
         ...initialTransaction,
         accountId: "", // passar aqui
         date: new Date().toISOString().split("T")[0],
       });
+      setReceiptDataUrl(null);
     }
   }, [editingTransaction]);
+
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,6 +65,7 @@ export const AddTransactionForm = ({
       ...newTransaction,
       value: newTransaction.type === "Debit" ? -price : price,
       date: new Date().toISOString().split("T")[0],
+      receipt: receiptDataUrl ?? newTransaction.urlAnexo ?? "",
     };
     addTransaction(transactionToSave);
 
@@ -124,7 +134,19 @@ export const AddTransactionForm = ({
           <option value="Educação" />
         </datalist>
       </div>
-
+      <ImageUpload
+        imageUrl={receiptDataUrl}
+        onImageSelect={(dataUrl) => {
+          setReceiptDataUrl(dataUrl);
+          setNewTransaction(prev => ({ ...prev, receipt: dataUrl }));
+        }}
+        onImageRemove={() => {
+          setReceiptDataUrl(null);
+          setNewTransaction((prev) => ({ ...prev, receipt: undefined }));
+        }}
+        onImagePreview={(dataUrl) => setSelectedReceipt(dataUrl)}
+        label="Recibo (opcional)"
+      />
       <div className="flex justify-around gap-4">
         <div
           onClick={() => {
@@ -159,6 +181,11 @@ export const AddTransactionForm = ({
       >
         {editingTransaction ? "Editar" : "Cadastrar"}
       </button>
+
+      <ReceiptModal
+        receiptUrl={selectedReceipt}
+        onClose={() => setSelectedReceipt(null)}
+      />
     </form>
   );
 };
