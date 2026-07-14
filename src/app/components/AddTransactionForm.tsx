@@ -65,7 +65,7 @@ export const AddTransactionForm = ({
       ...newTransaction,
       value: newTransaction.type === "Debit" ? -price : price,
       date: new Date().toISOString().split("T")[0],
-      receipt: receiptDataUrl ?? newTransaction.urlAnexo ?? "",
+      urlAnexo: receiptDataUrl ?? newTransaction.urlAnexo ?? "",
     };
     addTransaction(transactionToSave);
 
