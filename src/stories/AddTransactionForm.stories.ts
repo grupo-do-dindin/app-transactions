@@ -22,12 +22,15 @@ export const Default: Story = {
   args: {
     addTransaction: () => {},
     editingTransaction: {
-      id: 1,
-      description: "Salário",
-      type: "income",
-      category: "Trabalho",
-      price: 5000,
-      createdAt: "2024-01-01",
+        id: "1",
+        accountId: "1",
+        type: "Credit",
+        to: "Trabalho",
+        value: 5000,
+        date: "2024-01-01",
+        from: "",
+        anexo: "",
+        urlAnexo: ""
     },
     onClose: () => {},
   },
