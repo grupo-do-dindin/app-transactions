@@ -27,6 +27,13 @@ function AuthCallbackContent() {
         path: "/",
       });
 
+      Cookies.set("dindin_session", token, {
+        secure: true,
+        sameSite: "lax",
+        expires: 1/3,
+        path: "/",
+      });
+
       redirect("/");
     } else {
       const authUrl = process.env.NEXT_PUBLIC_AUTH_URL ?? "http://localhost:3001";
