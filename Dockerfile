@@ -6,7 +6,11 @@ RUN apk add --no-cache libc6-compat
 
 WORKDIR /app
 
-COPY package.json package-lock.json ./
+COPY package.json package-lock.json .npmrc ./
+
+ARG NPM_TOKEN
+ENV NPM_TOKEN=$NPM_TOKEN
+
 RUN npm install
 
 COPY . .

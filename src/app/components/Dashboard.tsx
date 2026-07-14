@@ -3,6 +3,7 @@
 import { AddTransactionForm } from "../components/AddTransactionForm";
 import { TransactionList } from "../components/TransactionList";
 import { AccountBalance } from "../components/AccountBalance";
+import { DailyFlowChart } from "../components/DailyFlowChart";
 
 import { ITransaction } from "../types/transaction";
 
@@ -33,6 +34,10 @@ export const DashboardView = ({
   return (
     <div className="min-h-screen w-full flex flex-col">
       <AccountBalance transactions={transactions} />
+
+      <div className="w-full max-w-4xl mx-auto mt-6 px-4">
+        <DailyFlowChart transactions={transactions} />
+      </div>
 
       {isModalOpen && (
         <div
